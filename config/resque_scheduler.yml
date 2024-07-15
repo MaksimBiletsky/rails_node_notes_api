@@ -1,0 +1,2 @@
+ExternalApiCallJob:
+  every: 5m
