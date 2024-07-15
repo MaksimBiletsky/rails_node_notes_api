@@ -38,6 +38,15 @@ class NotesController < ApplicationController
     render json: @notes
   end
 
+  def import_from_external_service
+    response = ExternalApiNotesCreator.call
+    if response[:error]
+      render json: { error: response[:error] }, status: :unprocessable_entity
+    else
+      render json: { message: 'Notes imported successfully', notes: response[:notes] }, status: :created
+    end
+  end
+
   private
 
   def set_note

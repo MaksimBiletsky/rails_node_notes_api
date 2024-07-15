@@ -77,4 +77,31 @@ RSpec.describe "Notes", type: :request do
       expect { Note.find(note_id) }.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
+
+  describe "POST /notes/import_from_external_service" do
+    context "when the import is successful" do
+      before do
+        allow(ExternalApiNotesCreator).to receive(:call).and_return({ notes: create_list(:note, 2) })
+      end
+
+      it "returns a success message and the imported notes" do
+        post "/notes/import_from_external_service"
+        expect(response).to have_http_status(201)
+        expect(JSON.parse(response.body)['message']).to eq('Notes imported successfully')
+        expect(JSON.parse(response.body)['notes'].size).to eq(2)
+      end
+    end
+
+    context "when the import fails" do
+      before do
+        allow(ExternalApiNotesCreator).to receive(:call).and_return({ error: 'Something went wrong' })
+      end
+
+      it "returns an error message" do
+        post "/notes/import_from_external_service"
+        expect(response).to have_http_status(422)
+        expect(JSON.parse(response.body)['error']).to eq('Something went wrong')
+      end
+    end
+  end
 end
