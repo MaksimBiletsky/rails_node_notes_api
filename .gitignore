@@ -1,3 +1,6 @@
+dump.rdb
+.DS_Store
+
 *.rbc
 capybara-*.html
 .rspec
