@@ -40,7 +40,5 @@ docker-compose up
 
 ### Accessing the Servers
 
-## Accessing the Servers
-
 - **Rails API Server**: Available at [http://localhost:3000](http://localhost:3000)
 - **Node.js Server**: Available at [http://localhost:3001](http://localhost:3001)
