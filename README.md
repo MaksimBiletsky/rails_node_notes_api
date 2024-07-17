@@ -1,24 +1,46 @@
-# README
+# Project Setup and Run Guide
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This guide will help you set up and run the project using Docker.
 
-Things you may want to cover:
+## Prerequisites
 
-* Ruby version
+- Ensure you have Docker and Docker Compose installed on your machine.
 
-* System dependencies
+## Step-by-Step Instructions
 
-* Configuration
+### 1. Create the `.env` File
 
-* Database creation
+Copy the `.env.example` file to create a new `.env` file. This file will store your environment variables.
 
-* Database initialization
+```sh
+cp .env.example .env
+```
 
-* How to run the test suite
+### 2. Build the Docker Images
 
-* Services (job queues, cache servers, search engines, etc.)
+Use Docker Compose to build the images specified in the `docker-compose.yml` file.
 
-* Deployment instructions
+```sh
+docker-compose build
+```
 
-* ...
+### 3. Set Up the Database
+
+Run the following command to create and migrate the database for the Rails application.
+
+```sh
+docker-compose run railsapp rails db:create db:migrate
+```
+
+### 4. Start the Services
+
+```sh
+docker-compose up
+```
+
+### Accessing the Servers
+
+## Accessing the Servers
+
+- **Rails API Server**: Available at [http://localhost:3000](http://localhost:3000)
+- **Node.js Server**: Available at [http://localhost:3001](http://localhost:3001)
