@@ -6,7 +6,7 @@ const port = 3001;
 
 app.use(express.json());
 
-const railsApiBaseUrl = 'http://localhost:3000';
+const railsApiBaseUrl = 'http://railsapp:3000';
 
 app.get('/notes', async (req, res) => {
   try {

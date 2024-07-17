@@ -1,5 +1,5 @@
 class NotesController < ApplicationController
-  before_action :log_action
+  # before_action :log_action
   before_action :set_note, only: [:show, :update, :destroy]
 
   def index

@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:latest
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+  
+  mongodb:
+    image: mongo:latest
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  railsapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/myapp
+    depends_on:
+      - mysql
+      - mongodb
+      - redis
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      MONGODB_URL: ${MONGODB_URL}
+      REDIS_URL: ${REDIS_URL}
+    env_file:
+      - .env
+
+  resque_scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/myapp
+    depends_on:
+      - railsapp
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      MONGODB_URL: ${MONGODB_URL}
+      REDIS_URL: ${REDIS_URL}
+    command: bundle exec rake resque:scheduler
+
+  resque_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/myapp
+    depends_on:
+      - railsapp
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      MONGODB_URL: ${MONGODB_URL}
+      REDIS_URL: ${REDIS_URL}
+      QUEUE: '*'
+    command: bundle exec rake resque:work
+
+  nodeapp:
+    build:
+      context: nodejs-rails-api-demo
+      dockerfile: Dockerfile
+    volumes:
+      - ./nodeapp:/usr/src/app
+    ports:
+      - "3001:3001"
+  
+volumes:
+  mysql_data:
+  mongo_data:
